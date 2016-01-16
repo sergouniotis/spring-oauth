@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<context:component-scan base-package="com.tpns" />
+
+	<sec:http use-expressions="true"  authentication-manager-ref="authenticationManager" entry-point-ref="basicAuthenticationEntryPoint">
+		<sec:intercept-url pattern="/v1/article/published" access="permitAll"  />
+		<sec:intercept-url pattern="/v1/article/**" access="hasAuthority('ROLE_AUTHOR')"  />	
+		<sec:anonymous enabled="true"  />
+		<sec:csrf disabled="true" /> 	
+		<sec:custom-filter ref="basicAuthenticationFilter"  position="FORM_LOGIN_FILTER "/>
+	</sec:http>
+	
+	<bean id="basicAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+		<property name="realmName" value="tpns"/>
+	</bean>
+	
+	<bean id="basicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+		<constructor-arg ref="authenticationManager"/>
+	</bean>
+
+	<sec:authentication-manager id="authenticationManager">
+		<sec:authentication-provider>
+			<sec:user-service>
+				<sec:user name="author" authorities="ROLE_AUTHOR" password="author" />
+			</sec:user-service>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+	
+	<sec:global-method-security authentication-manager-ref="authenticationManager"
+		jsr250-annotations="enabled" access-decision-manager-ref="accessDecisionManager" />
+
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<constructor-arg>
+			<list>
+				<bean class="org.springframework.security.access.annotation.Jsr250Voter" />
+				<bean class="org.springframework.security.access.vote.RoleVoter">
+					<property name="rolePrefix" value=""/>
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+
+
+</beans>
