@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/endpoint")
 public class TsController {
 
-	@PreAuthorize("#oauth2.hasScope('read')")
+//	@PreAuthorize("#oauth2.hasScope('read')")
 	@RequestMapping(method = RequestMethod.GET, path = "/public")
 	public String findPublished() {
 		return UUID.randomUUID().toString();
