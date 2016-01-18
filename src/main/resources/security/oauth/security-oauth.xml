@@ -22,7 +22,7 @@ http://www.springframework.org/schema/security/spring-security.xsd
 http://www.springframework.org/schema/security/oauth2 
 http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 
-<!-- 	<import resource="resource-server.xml" /> -->
-<!-- 	<import resource="authorization-server.xml" /> -->
+	<import resource="resource-server.xml" />
+	<import resource="authorization-server.xml" />
 
 </beans>

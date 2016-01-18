@@ -24,27 +24,31 @@ http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 
 
 
-<!-- 	<sec:http create-session="never" use-expressions="true"
-		pattern="/endpoint/public" authentication-manager-ref="oauthAuthenticationManager"
+	<sec:http create-session="never" use-expressions="true"
+		pattern="/endpoint/public"
+		authentication-manager-ref="oauthAuthenticationManager"
 		entry-point-ref="oauthAuthenticationEntryPoint">
 		<sec:intercept-url pattern="/endpoint/public"
-			access="hasRole('ROLE_AUTHOR')" />
-		<sec:http-basic />
+			access="hasAuthority('ROLE_AUTHOR')" />
+<!-- 		access-decision-manager-ref="accessDecisionManager"  -->
+		<!-- <sec:http-basic /> -->
 		<sec:csrf disabled="true" />
 		<sec:anonymous enabled="true" />
-		<sec:custom-filter ref="oauthResourceFilter"  position="PRE_AUTH_FILTER" />
+		<sec:custom-filter ref="oauthResourceFilter"
+			position="PRE_AUTH_FILTER" />
 	</sec:http>
 
 	<bean id="oauthAuthenticationEntryPoint"
 		class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint" />
-		
-		
-	<bean id="oauthResourceFilter" class="org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter">
-		<property name="authenticationManager" ref="oauthAuthenticationManager"/>
+
+
+	<bean id="oauthResourceFilter"
+		class="org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter">
+		<property name="authenticationManager" ref="oauthAuthenticationManager" />
 	</bean>
 
- 	<oauth2:resource-server id="oauthResourceFilter"
-		resource-id="ts" authentication-manager-ref="oauthAuthenticationManager" /> -->
+	<oauth2:resource-server id="oauthResourceFilter"
+		resource-id="ts" authentication-manager-ref="oauthAuthenticationManager" />
 
 	<bean id="oauthAuthenticationManager"
 		class="org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationManager">

@@ -12,7 +12,7 @@ spring:
 
 config:
     oauth2:
-        clientID: confidential
+        clientID: client
         clientSecret: secret
         accessTokenUri: http://localhost:8080/oauth/token
         userAuthorizationUri: http://localhost:8080/oauth/authorize
@@ -56,7 +56,7 @@ security:
 logging :
     level :
         root : WARN
-        org.springframework.security: DEBUG
+        org.springframework.security: INFO
         
 cors:
     allowed:
