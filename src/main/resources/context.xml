@@ -29,7 +29,7 @@ http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 	<aop:aspectj-autoproxy />
 	<tx:annotation-driven transaction-manager="transactionManager" />	
 	
-<!-- 	<import resource="classpath:security/basic/security-basic.xml"/> -->
-	<import resource="classpath:security/oauth/security-oauth.xml"/>
+	<import resource="classpath:security/basic/security-basic.xml"/>
+<!-- 	<import resource="classpath:security/oauth/security-oauth.xml"/> -->
 
 </beans>

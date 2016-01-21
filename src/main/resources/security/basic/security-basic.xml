@@ -36,12 +36,12 @@ http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 		methods, not web requests. You should configure a separate AccessDecisionManager 
 		for use with your method security and add the acl voters to that -->
 	<sec:http use-expressions="true" authentication-manager-ref="userAuthenticationManager"
-		entry-point-ref="basicAuthenticationEntryPoint">
-		<sec:intercept-url pattern="/endpoint/public"
-			access="hasAuthority('ROLE_AUTHOR')" />
+		pattern="/endpoint/public"><!-- access-decision-manager-ref="accessDecisionManager" entry-point-ref="basicAuthenticationEntryPoint" -->
+		<sec:intercept-url pattern="/endpoint/**" access="permitAll" /><!-- 
+			access="isAuthenticated()" -->
 		<sec:anonymous enabled="true" />
 		<sec:csrf disabled="true" />
-		<!-- <sec:http-basic entry-point-ref="basicAuthenticationEntryPoint" /> -->
+		<sec:http-basic entry-point-ref="basicAuthenticationEntryPoint" />
 		<sec:custom-filter ref="basicAuthenticationFilter"
 			position="FORM_LOGIN_FILTER " />
 	</sec:http>
@@ -53,15 +53,28 @@ http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 
 	<sec:authentication-manager id="userAuthenticationManager">
 		<sec:authentication-provider>
-			<sec:user-service>
-				<sec:user name="author" authorities="ROLE_AUTHOR" password="author" />
-			</sec:user-service>
+			<sec:jdbc-user-service data-source-ref="dataSource"
+				role-prefix="ROLE_"
+				authorities-by-username-query="select u.username, r.role from users u inner join users_roles r on r.user_id=u.user_id where username = ?"
+				users-by-username-query="select username,password,true from users where username = ?"/>
 		</sec:authentication-provider>
 	</sec:authentication-manager>
+
+	<bean id="userDetailsService"
+		class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+		<property name="usersByUsernameQuery"
+			value="select username,password,true from users where username = ?" />
+		<property name="authoritiesByUsernameQuery"
+			value="select u.username, r.role from users u inner join users_roles r on r.user_id=u.user_id where username = ?" />
+		<property name="enableGroups" value="true" />
+		<property name="dataSource" ref="dataSource"/>
+		<!-- <property name="groupAuthoritiesByUsernameQuery" value=""/> -->
+	</bean>
 
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
 		<constructor-arg>
 			<list>
+				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
 				<bean
 					class="org.springframework.security.web.access.expression.WebExpressionVoter" />
 				<bean class="org.springframework.security.access.annotation.Jsr250Voter" />
@@ -73,7 +86,7 @@ http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
 	</bean>
 
 	<sec:global-method-security
-		jsr250-annotations="enabled" access-decision-manager-ref="accessDecisionManager">
+		secured-annotations="enabled" jsr250-annotations="disabled">
 	</sec:global-method-security>
 
 	<bean id="basicAuthenticationFilter"
