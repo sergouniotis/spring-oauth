@@ -1,3 +1,5 @@
+A spring project which acts as a prototype for OAuth2 ( spring-oauth). 
+
 Build and Run Project
 ---------------------------------------------------------------------------------------------------------------------------------------------
 ./gradlew build bootRun
